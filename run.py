@@ -7,6 +7,7 @@ from pprint import pprint
 import sqlite3
 
 disk_path="/Volumes/NO NAME"
+db_name="media.db"
 #disk_path="./testdir"
 
 
@@ -36,13 +37,30 @@ def scan_media():
                         
                         
 def test_db():
-    conn = sqlite3.connect("media.db")
+    conn = sqlite3.connect(db_name)
     c = conn.cursor()
     c.execute('SELECT * from sqlite_master WHERE type="table"')
-    print c.fetchone()
+    print c.fetchall()
+    conn.close()
+
+def create_db_table():
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.execute('''CREATE TABLE media_files 
+    (   media_id INTEGER PRIMARY KEY autoincrement not null,
+        file_path text,
+        width INTEGER,
+        height INTEGER,
+        duration INTEGER,
+        begin_time INTEGER,
+        end_time INTEGER    
+    )
+    ''')
+    conn.commit()
     conn.close()
 
 #scan_media()
+#create_db_table()
 test_db()
 print "done"
 
