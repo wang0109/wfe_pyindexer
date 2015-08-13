@@ -11,4 +11,5 @@ Install
 On Mac,
 	brew install mediainfo
 	pip install pymediainfo
+	pip install lxml
 

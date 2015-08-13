@@ -20,7 +20,11 @@ for dirname, dirnames, filenames in os.walk(disk_path):
             file_size = os.path.getsize(filename)
             file_size_mb = file_size >> 20
             if file_size_mb > 1000:
-                print(filename, file_size_mb , "MB")
+                media_info = MediaInfo.parse(filename)
+                for track in media_info.tracks:
+                    if track.track_type == 'Video':
+                        print track.bit_rate, track.bit_rate_mode, track.codec, filename
+                #print(filename, file_size_mb , "MB")
             
         #print(subdir)
 
