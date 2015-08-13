@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 from os import listdir
+from pymediainfo import MediaInfo
 
 disk_path="/Volumes/NO NAME"
 #disk_path="./testdir"

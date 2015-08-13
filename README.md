@@ -10,4 +10,5 @@ Install
 =======
 On Mac,
 	brew install mediainfo
+	pip install pymediainfo
 
