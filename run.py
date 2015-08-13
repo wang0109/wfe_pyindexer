@@ -8,6 +8,7 @@ import sqlite3
 
 disk_path="/Volumes/NO NAME"
 db_name="media.db"
+main_table="media_files"
 #disk_path="./testdir"
 
 
@@ -42,6 +43,16 @@ def test_db():
     c.execute('SELECT * from sqlite_master WHERE type="table"')
     print c.fetchall()
     conn.close()
+    
+def check_db_exist(table_name):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    bind = (table_name,)
+    c.execute('SELECT * from sqlite_master WHERE type="table" AND name=?', bind)
+    ret = c.fetchall()
+    conn.close()
+    
+    return ret
 
 def create_db_table():
     conn = sqlite3.connect(db_name)
@@ -61,6 +72,11 @@ def create_db_table():
 
 #scan_media()
 #create_db_table()
+if check_db_exist(main_table):
+    print "%s already exists" % main_table
+else:
+    print "%s not exists" % main_table
+
 test_db()
 print "done"
 
