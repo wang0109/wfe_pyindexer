@@ -1,0 +1,3 @@
+[submodule "pymediainfo"]
+	path = pymediainfo
+	url = https://github.com/paltman/pymediainfo.git
