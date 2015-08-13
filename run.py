@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import os
+import time
 from os import listdir
 from pymediainfo import MediaInfo
+from pprint import pprint
 
 disk_path="/Volumes/NO NAME"
 #disk_path="./testdir"
@@ -19,11 +21,18 @@ for dirname, dirnames, filenames in os.walk(disk_path):
             #print(file_stem, file_ext)
             file_size = os.path.getsize(filename)
             file_size_mb = file_size >> 20
+            file_mtime = os.path.getmtime(filename)
+            file_mtime_h = time.ctime(file_mtime)
             if file_size_mb > 1000:
                 media_info = MediaInfo.parse(filename)
                 for track in media_info.tracks:
                     if track.track_type == 'Video':
-                        print track.bit_rate, track.bit_rate_mode, track.codec, filename
+                        print track.width, track.height, track.duration, file_mtime_h, file_mtime, filename
+                        # track.other_duration
+                        #pprint(track.to_data())
+                        #break
+                        
+                        #print track.bit_rate, track.bit_rate_mode, track.codec, filename
                 #print(filename, file_size_mb , "MB")
             
         #print(subdir)
