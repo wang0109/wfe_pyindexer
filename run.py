@@ -10,17 +10,17 @@ disk_path="/Volumes/NO NAME"
 db_name="media.db"
 main_table="media_files"
 #disk_path="./testdir"
-debug_insert_max = 5
+#debug_insert_max = 5
 
 
 #files = [ f for f in listdir(disk_path) ]
 
 #print files
-debug_insert_count = 0
+#debug_insert_count = 0
 
 def scan_media():
     for dirname, dirnames, filenames in os.walk(disk_path):
-        global debug_insert_count
+        #global debug_insert_count
         for file in filenames:
             filename = os.path.join(dirname,file)
             file_stem, file_ext = os.path.splitext(filename)
@@ -35,11 +35,11 @@ def scan_media():
                     for track in media_info.tracks:
                         if track.track_type == 'Video':
                             print track.width, track.height, track.duration, file_mtime_h, file_mtime, filename
-                            debug_insert_count += 1
+                           # debug_insert_count += 1
                             insert_db(db_name, main_table, track.width, track.height, \
                                 track.duration, file_mtime, filename)
-                            if debug_insert_count > debug_insert_max:
-                                return
+                           # if debug_insert_count > debug_insert_max:
+                             #   return
                         # track.other_duration
                         #pprint(track.to_data())
                         #break
