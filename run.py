@@ -89,6 +89,27 @@ def create_db_table(table_name):
     % table_name) #insecure, but binding does not work on table names..
     conn.commit()
     conn.close()
+    
+def print_range():
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.execute(''' SELECT MIN(begin_time) from %s
+    ''' % main_table)
+    #print "Min begin:", c.fetchall()
+    row = c.fetchall()
+    min_begin = row[0][0]
+    #conn.close()
+    print "min:", min_begin, ", as:", time.ctime(min_begin)
+    
+    c.execute(''' SELECT MAX(end_time) from %s
+    ''' % main_table)
+    
+    row = c.fetchall()
+    max_end = row[0][0]
+    
+    print "max:", max_end, ", as:", time.ctime(max_end)
+    conn.close()
+    
 
 #scan_media()
 #create_db_table()
@@ -99,7 +120,8 @@ else:
     create_db_table(main_table)
 
 #test_db()
-scan_media()
+#scan_media()
+print_range()
 print "done"
 
                         #print track.bit_rate, track.bit_rate_mode, track.codec, filename
