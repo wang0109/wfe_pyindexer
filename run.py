@@ -110,6 +110,34 @@ def print_range():
     print "max:", max_end, ", as:", time.ctime(max_end)
     conn.close()
     
+    return min_begin, max_end
+    
+def query_time_t():
+    min_t, max_t = print_range()
+    user_time = input("Please type a time_t:")
+    print "Your input(",user_time,") is local time:", time.ctime(user_time)
+    #print "Your input: [", user_time, "]"
+    if user_time < min_t or user_time > max_t:
+        print "Your input(", user_time,") is out of range: [", min_t, ",", max_t,"]"
+        return
+    
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    bind = (user_time, user_time,)
+    c.execute(''' SELECT file_path, begin_time, end_time
+    FROM %s WHERE begin_time <= ? AND end_time >= ?
+    ''' % main_table, bind )
+    rows = c.fetchall()
+    for row in rows:
+        f_name, b_time, e_time = row
+        offset = user_time - b_time
+        offset_mins = offset / 60
+        offset_secs = offset % 60
+        print "File [",f_name,"], offset:", offset_mins, "mins", offset_secs, "secs, range [", \
+            time.ctime(b_time), "to", time.ctime(e_time),"]"
+            
+    conn.close()
+    
 
 #scan_media()
 #create_db_table()
@@ -121,7 +149,8 @@ else:
 
 #test_db()
 #scan_media()
-print_range()
+#print_range()
+query_time_t()
 print "done"
 
                         #print track.bit_rate, track.bit_rate_mode, track.codec, filename
