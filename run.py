@@ -10,14 +10,17 @@ disk_path="/Volumes/NO NAME"
 db_name="media.db"
 main_table="media_files"
 #disk_path="./testdir"
+debug_insert_max = 5
 
 
 #files = [ f for f in listdir(disk_path) ]
 
 #print files
+debug_insert_count = 0
 
 def scan_media():
     for dirname, dirnames, filenames in os.walk(disk_path):
+        global debug_insert_count
         for file in filenames:
             filename = os.path.join(dirname,file)
             file_stem, file_ext = os.path.splitext(filename)
@@ -32,10 +35,26 @@ def scan_media():
                     for track in media_info.tracks:
                         if track.track_type == 'Video':
                             print track.width, track.height, track.duration, file_mtime_h, file_mtime, filename
+                            debug_insert_count += 1
+                            insert_db(db_name, main_table, track.width, track.height, \
+                                track.duration, file_mtime, filename)
+                            if debug_insert_count > debug_insert_max:
+                                return
                         # track.other_duration
                         #pprint(track.to_data())
                         #break
-                        
+
+def insert_db(db,tbl, width, height, duration, end_time, file_name):
+    print "inserting: db:", db, "tbl:", tbl, ",", width, height, duration, end_time, file_name 
+    conn = sqlite3.connect(db)
+    c = conn.cursor()
+    begin_time = end_time - (duration/1000)
+    c.execute('''INSERT INTO %s (file_path,width,height,duration, begin_time, end_time)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ''' % tbl, (file_name, width, height, duration, begin_time, end_time) )
+    conn.commit()
+    conn.close()
+                            
                         
 def test_db():
     conn = sqlite3.connect(db_name)
@@ -67,19 +86,20 @@ def create_db_table(table_name):
         begin_time INTEGER,
         end_time INTEGER    
     )'''
-    % table_name)
+    % table_name) #insecure, but binding does not work on table names..
     conn.commit()
     conn.close()
 
 #scan_media()
 #create_db_table()
 if check_db_exist(main_table):
-    print "%s already exists" % main_table
+    print "Table %s already exists" % main_table
 else:
-    print "%s not exists" % main_table
+    print "Table %s not exist, creating..." % main_table
     create_db_table(main_table)
 
 #test_db()
+scan_media()
 print "done"
 
                         #print track.bit_rate, track.bit_rate_mode, track.codec, filename
