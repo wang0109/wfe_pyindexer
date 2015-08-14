@@ -54,10 +54,11 @@ def check_db_exist(table_name):
     
     return ret
 
-def create_db_table():
+def create_db_table(table_name):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    c.execute('''CREATE TABLE media_files 
+    #bind = (table_name,)
+    c.execute('''CREATE TABLE %s 
     (   media_id INTEGER PRIMARY KEY autoincrement not null,
         file_path text,
         width INTEGER,
@@ -65,8 +66,8 @@ def create_db_table():
         duration INTEGER,
         begin_time INTEGER,
         end_time INTEGER    
-    )
-    ''')
+    )'''
+    % table_name)
     conn.commit()
     conn.close()
 
@@ -76,8 +77,9 @@ if check_db_exist(main_table):
     print "%s already exists" % main_table
 else:
     print "%s not exists" % main_table
+    create_db_table(main_table)
 
-test_db()
+#test_db()
 print "done"
 
                         #print track.bit_rate, track.bit_rate_mode, track.codec, filename
